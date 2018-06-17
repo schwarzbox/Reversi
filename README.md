@@ -1,6 +1,6 @@
 # Reversi-LÖVE
 
-Reversi is a strategy board game for two players, played on an 8×8 uncheckered board.
+Reversi is a strategy board game for two players, played on an 8×8 uncheckered board. Click help in main menu and app show you available moves when you start playing.
 
 Made with Love2d and simple self-made GUI library on top of Love Engine.
 
