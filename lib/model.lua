@@ -5,7 +5,7 @@
 -- model REVERSI
 
 local set = require('lib/set')
-local fc = require('lib/fun')
+local fc = require('lib/fct')
 
 local function reset(matrix)
     for i=1, set.FIELD do

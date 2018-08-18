@@ -25,6 +25,8 @@
 -- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 -- DEALINGS IN THE SOFTWARE.
 
+-- + update ui events
+
 local view = require('lib/view')
 local set = require('lib/set')
 
@@ -52,19 +54,21 @@ function love.draw()
     view.Game:draw()
 end
 
-function love.keypressed(key)
+function love.keypressed(key,unicode,isrepeat)
     if key == 'escape' then
         love.event.quit()
     end
 
     if (key == 'lgui') then love.event.quit('restart') end
     if key == 'p' then view.Game.pause = not view.Game.pause end
-
 end
-
+function love.keyreleased(key,unicode) end
+function love.mousepressed(x,y,button,istouch) end
+function love.mousereleased(x,y,button,istouch) end
+function love.mousemoved(x,y,dx,dy,istouch) end
+function love.wheelmoved(x, y) end
 function love.focus(f)
     if not f then view.Game.pause = true
     else view.Game.pause = false end
 end
-
 function love.quit() print('game over') end

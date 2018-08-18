@@ -3,7 +3,7 @@
 -- (c) Alexander Veledzimovich
 
 -- view REVERSI
-local fc = require('lib/fun')
+local fc = require('lib/fct')
 local gui = require('lib/lovui')
 local model = require('lib/model')
 local set = require('lib/set')
@@ -11,6 +11,7 @@ local set = require('lib/set')
 local Game = {}
 
 function Game:init()
+    gui.init()
     self.cel = {first='X', second='O'}
     self.turn = 'X'
     self.pause = false
@@ -52,7 +53,7 @@ function Game:set_menu_scr()
 
     gui.Label{text=' '..set.GAMENAME:upper()..' ',
                     x=set.MIDWID, y=set.MIDHEI-set.DIST*3,
-                    fnt=set.TITLEFNT, anchor='s',frame=3}
+                    fnt=set.TITLEFNT, anchor='s',frame=2,corner={4,4,2}}
 
     local xo_sel = gui.HBox{x=set.MIDWID, y=set.MIDHEI-set.DIST*2,
                     anchor='n', sep=10}
@@ -77,12 +78,11 @@ function Game:set_menu_scr()
                 )
 
     gui.CheckBox{text='HELP', x=set.MIDWID, y=set.MIDHEI+set.DIST,
-        fnt=set.MENUFNT, anchor='n', variable=self.help}
+        fnt=set.MENUFNT, anchor='n', frame=0,variable=self.help}
 
     gui.Button{text=' START ', x=set.MIDWID, y=set.MIDHEI+set.DIST*4,
                     fnt=set.MENUFNT, anchor='n',
-                    command=function() self:set_game_scr() self:reset() end,
-                    frame=2}
+                    command=function() self:set_game_scr() self:reset() end}
 
 end
 
@@ -103,7 +103,7 @@ function Game:reset()
     self.delta_time = self.ai_dt.val
     self.wait_loop = true
     -- label to execute command
-    gui.PopUp{text=self.turn .. ' START', x=set.MIDWID, y=set.MIDHEI,
+    gui.LabelExe{text=self.turn .. ' START', x=set.MIDWID, y=set.MIDHEI,
                     fnt=set.TITLEFNT, fntclr=set.TXTCLR,
                     command=function() self.wait_loop=false end}
 end
@@ -114,25 +114,23 @@ function Game:set_game_scr()
 
     gui.Label{text=self.score_x.val,x=set.DIST,y=set.DIST/2,
                     anchor='w', fnt=set.GAMEFNT,
-                    variable=self.score_x,frame=1}
+                    variable=self.score_x,frame=2,corner={4,4,2}}
 
-    gui.Label{text=self.score_o.val,x=set.WID-set.DIST,y=set.DIST/2,
+    gui.Label{text=self.score_o.val,x=set.WID-set.DIST-2,y=set.DIST/2,
                     anchor='e',fnt=set.GAMEFNT,
-                    variable=self.score_o,frame=1}
+                    variable=self.score_o,frame=2,corner={4,4,2}}
 
     gui.Label{text='SCORE', x=set.MIDWID, y=set.DIST/2,fnt=set.MENUFNT}
 
     gui.Button{text=' MENU ', x=set.DIST, y=set.HEI-set.DIST/2,
                 anchor='w', fnt=set.GAMEFNT,
-                command=function() self:set_menu_scr() end,
-                frame=1}
+                command=function() self:set_menu_scr() end}
     -- opt button
     gui.Button{image=love.image.newImageData('res/gear.png'),
                 x=set.MIDWID, y=set.HEI-set.DIST/2, anchor='center',
-                command=function() self:set_opt_scr() end,
-                frame=1, rot_dt=1}
+                command=function() self:set_opt_scr() end, rot_dt=1}
 
-    gui.Button{text=' RESTART ', x=set.WID-set.DIST, y=set.HEI-set.DIST/2,
+    gui.Button{text=' RESTART ', x=set.WID-set.DIST-2, y=set.HEI-set.DIST/2,
         anchor='e', fnt=set.GAMEFNT,command=function() self:reset() end,
         frame=1}
 
@@ -142,7 +140,7 @@ function Game:set_game_scr()
             local Cells=gui.Label{x=set.DIST+(set.SIZE+set.SEP)*(i-1),
                                 y=set.DIST+(set.SIZE+set.SEP)*(j-1),
                                 fnt=set.XOFNT, anchor='nw',fntclr=set.XOCLR,
-                                frame=1, frmclr=set.SQCLR,
+                                frame=2, frmclr=set.SQCLR, corner={4,4,2},
                                 mode='fill', wid=set.SIZE, hei=set.SIZE}
             Cells.type = 'cell'
         end
@@ -275,7 +273,7 @@ end
 
 function Game:draw()
     if self.now == 'menu_scr' or self.now =='opt_scr' then
-       for _, item in pairs(gui.Manager.items) do item:draw() end
+       gui.Manager.draw()
     elseif self.now == 'game_scr' then
        for _, item in pairs(gui.Manager.items) do
            if item.text == 'PAUSE' and not self.pause then
@@ -290,8 +288,7 @@ end
 function Game:update(dt)
     self.delta_time = self.delta_time + dt
     if self.now == 'menu_scr' or self.now =='opt_scr' then
-        for _, item in pairs(gui.Manager.items) do item:update(dt) end
-
+        gui.Manager.update(dt)
     elseif self.now == 'game_scr' and not self.pause then
         local matrix
         local scores = model.scores(self.matrix)
@@ -319,18 +316,18 @@ function Game:update(dt)
                 y = math.floor((y-set.DIST)/set.SIZE)
 
                 if matrix[x+1][y+1] == '.' then
-                    item.frmclr = set.GRAYBLUE
+                    item:set({deffrm=set.GRAYBLUE})
                 else
-                    item.defclr = item.fntclr
-                    item.text = matrix[x+1][y+1]
-                    item.frmclr = item.deffrm
+                    item:set({defclr=item.fntclr,
+                                text=matrix[x+1][y+1],
+                                deffrm = item.frmclr})
                 end
 
                 local complex_eq = fc.partial(fc.equal, {x+1, y+1})
                 if view_t then
                     local in_show = fc.map(complex_eq, view_t)
                     if fc.isval(true, in_show) then
-                        item.defclr = item.onclr
+                        item:set({defclr=item.onfrm})
                     end
                 end
                 item:setup()

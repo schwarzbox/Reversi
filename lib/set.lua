@@ -18,12 +18,12 @@ local set = {
     GRAYBLUE = {80/255, 80/255, 84/255,1},
     -- Vera Sans
     TITLEFNT = {nil,64},
-    XOFNT = {nil,52},
+    XOFNT = {nil,48},
     MENUFNT = {nil,32},
     GAMEFNT = {nil,24},
 
-    SEP = 4,
-    DIST = 36,
+    SEP = 6,
+    DIST = 40,
     FIELD = 8
 }
 set.SIZE = ((set.HEI-set.DIST*2)/set.FIELD) - set.SEP
