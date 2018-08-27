@@ -1,6 +1,6 @@
 #!/usr/bin/env love
 -- REVERSI
--- 2.0
+-- 3.0
 -- Game (love2d)
 -- main.lua
 
@@ -25,8 +25,6 @@
 -- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 -- DEALINGS IN THE SOFTWARE.
 
--- + update ui events
-
 local view = require('lib/view')
 local set = require('lib/set')
 
@@ -44,7 +42,7 @@ end
 
 function love.update(dt)
     local upd_title = string.format('%s %s fps %.2d', set.GAMENAME, set.VER,
-                                   love.timer.getFPS())
+                                    love.timer.getFPS())
     love.window.setTitle(upd_title)
 
     view.Game:update(dt)

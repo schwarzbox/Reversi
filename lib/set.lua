@@ -5,7 +5,7 @@
 -- set REVERSI
 local set = {
     GAMENAME = 'Reversi',
-    VER = '2.0',
+    VER = '3.0',
     FULLSCR = false,
     WID = love.graphics.getWidth(),
     HEI = love.graphics.getHeight(),
