@@ -51,7 +51,7 @@ local UI = {kpress={},krelease={},mpress={},mrelease={},
 UI.DT = 0.017
 function UI.init()
     local ev = {'keypressed','keyreleased','mousepressed',
-            'mousereleased','mousemoved','wheelmoved'}
+            'mousereleased','mousemoved','wheelmoved','update'}
     -- add to love events
     local init_love = {}
     for i=1,#ev do
@@ -84,6 +84,8 @@ function UI.Cls(Super, cls)
     return setmetatable(cls,meta)
 end
 -- private
+function UI.update(dt) UI.clearevent() end
+
 function UI.keypressed(key,unicode,isrepeat)
     UI.kpress = {key,unicode,isrepeat}
 end
@@ -122,7 +124,6 @@ function UI.Manager.draw()
 end
 function UI.Manager.update(dt)
     for _, item in pairs( UI.Manager.items) do item:update(dt) end
-    UI.clearevent()
 end
 
 function UI.Manager.len() return #UI.Manager.items end
@@ -1148,11 +1149,11 @@ end
 
 function UI.ProgBar:update(dt)
     dt=dt or UI.get_dt()
-    self:set_value()
-    self:set_size()
     self:setup()
     if self.focus and not self.hide then
         local press = self:mouse_colpress(1)
+        self:set_value()
+        self:set_size()
         return press
     end
 end

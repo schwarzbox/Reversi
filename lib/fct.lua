@@ -31,13 +31,13 @@
 
 -- Tool Box
 -- gkv, lent, count, keys, vals, iskey, isval, ztab, range, repl,
--- cut, reverse, isort, slice, sep, clone, iter,
+-- split, reverse, isort, slice, sep, clone, iter,
 -- equal, join, valval, merge, same, uniq,
 -- map, mapr, filter, any, all, zip, partial, reduce, compose,
 -- permutation, randtab, randkey, randval, shuff, shuffknuth
 
 -- No metatables when return arr
--- keys, vals, ztab, range, repl, cut, sep, iter, valval, merge, same, uniq, map, filter, zip, permutation, randtab
+-- keys, vals, ztab, range, repl, split, sep, iter, valval, merge, same, uniq, map, filter, zip, permutation, randtab
 
 -- Error traceback
 -- novarg, numvarg
@@ -158,37 +158,19 @@ function FCT.repl(obj, num)
     return arr
 end
 
-function FCT.cut(obj, sep)
+function FCT.split(obj, sep)
     if type(obj)=='number' then obj = tostring(obj) end
     novarg(obj,'obj','string')
     sep = sep or ''
-    local arr = {}
-
-    local function utf8find(str,find)
-        for i=1, utf8.len(str) do
-            local st = utf8.offset(str,i)
-            local fin = utf8.offset(str,i+1)-1
-            if str:sub(st, fin)==find then
-                return i
-            end
+    local arr={}
+    if #sep>0 then
+        for i in string.gmatch(obj,'[^'..sep..']+') do
+            arr[#arr+1]=i
         end
     end
-
-    if utf8find(obj,sep)~=nil then
-        while utf8find(obj,sep)  do
-            local ind = utf8find(obj,sep)
-            local st = utf8.offset(obj,ind)
-            local fin = utf8.offset(obj,ind+1)-1
-            arr[#arr+1] = obj:sub(1, st-1)
-            obj = obj:sub(fin+1, -1)
-        end
-
-        arr[#arr+1] = obj:sub(1, obj:len())
-    else
-        for i=1, utf8.len(obj) do
-            local st = utf8.offset(obj,i)
-            local fin = utf8.offset(obj,i+1)-1
-            arr[i] = obj:sub(st, fin)
+    if #arr==0 then
+        for i in string.gmatch(obj,utf8.charpattern) do
+            arr[#arr+1]=i
         end
     end
     return arr

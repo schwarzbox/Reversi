@@ -41,7 +41,7 @@ function love.load()
 end
 
 function love.update(dt)
-    local upd_title = string.format('%s %s fps %.2d', set.GAMENAME, set.VER,
+    local upd_title = string.format('%s %s', set.GAMENAME, set.VER,
                                     love.timer.getFPS())
     love.window.setTitle(upd_title)
 
@@ -57,7 +57,7 @@ function love.keypressed(key,unicode,isrepeat)
         love.event.quit()
     end
 
-    if (key == 'lgui') then love.event.quit('restart') end
+    if (key == 'r') then love.event.quit('restart') end
     if key == 'p' then view.Game.pause = not view.Game.pause end
 end
 function love.keyreleased(key,unicode) end

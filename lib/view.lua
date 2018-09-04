@@ -131,8 +131,8 @@ function Game:set_game_scr()
                 command=function() self:set_opt_scr() end, rot_dt=1}
 
     gui.Button{text=' RESTART ', x=set.WID-set.DIST-2, y=set.HEI-set.DIST/2,
-        anchor='e', fnt=set.GAMEFNT,command=function() self:reset() end,
-        frame=1}
+        anchor='e', fnt=set.GAMEFNT,command=function() self:set_game_scr()
+         self:reset() end, frame=1}
 
     --  set game field
     for i=1, set.FIELD do
@@ -177,7 +177,7 @@ function Game:set_fin_scr(scores)
         command = function() return nil end
     end
 
-    gui.PopUp{text=win, x=set.MIDWID, y=set.MIDHEI, fnt=set.TITLEFNT,
+    gui.LabelExe{text=win, x=set.MIDWID, y=set.MIDHEI, fnt=set.TITLEFNT,
                             fntclr=set.TXTCLR, command=command}
     -- for tests AI only (don't use in final release)
     -- self:write_stat_log(scores)
