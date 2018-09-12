@@ -39,7 +39,7 @@ function Game:init()
     self.stat_var = {['X WIN']=0,['O WIN']=0,['DRAW']=0}
     self.total_games = 0
     -- for tests AI only (don't use in final release)
-    -- io.open('log/stat.txt','w'):close()
+    -- io.open('stat.txt','w'):close()
 
     self:set_menu_scr()
 end
@@ -185,7 +185,7 @@ end
 
 function Game:write_stat_log(scores)
     -- save result to log file
-    local new_file = io.open('log/stat.txt','a+')
+    local new_file = io.open('stat.txt','a+')
     if self.total_games == 1 then
         local pl1,pl2
         if self.player.val == 'HUMAN' then
