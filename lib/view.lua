@@ -128,7 +128,7 @@ function Game:set_game_scr()
     -- opt button
     gui.Button{image=love.image.newImageData('res/gear.png'),
                 x=set.MIDWID, y=set.HEI-set.DIST/2, anchor='center',
-                command=function() self:set_opt_scr() end, rot_dt=1}
+                command=function() self:set_opt_scr() end, da=1}
 
     gui.Button{text=' RESTART ', x=set.WID-set.DIST-2, y=set.HEI-set.DIST/2,
         anchor='e', fnt=set.GAMEFNT,command=function() self:set_game_scr()
@@ -325,12 +325,11 @@ function Game:update(dt)
 
                 local complex_eq = fc.partial(fc.equal, {x+1, y+1})
                 if view_t then
-                    local in_show = fc.map(complex_eq, view_t)
-                    if fc.isval(true, in_show) then
+                    local in_show = fc.filter(complex_eq, view_t)
+                    if #in_show>0 then
                         item:set({defclr=item.onfrm})
                     end
                 end
-                item:setup()
                 if upd then initx, inity = x+1, y+1 end
             end
         end

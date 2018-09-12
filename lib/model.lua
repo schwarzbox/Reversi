@@ -74,7 +74,7 @@ local function valid(matrix, tile, xst, yst)
     end
 
     matrix[xst][yst] = ' '
-    if fc.lent(arr) == 0 then return end
+    if fc.len(arr) == 0 then return end
     return arr
 end
 
