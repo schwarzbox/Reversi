@@ -1,8 +1,8 @@
 #!/usr/bin/env love
 -- Mon Mar 12 02:00:26 2018
 -- (c) Alexander Veledzimovich
-
 -- view REVERSI
+
 local fc = require('lib/fct')
 local gui = require('lib/lovui')
 local model = require('lib/model')
@@ -11,7 +11,7 @@ local set = require('lib/set')
 local Game = {}
 
 function Game:init()
-    gui.init()
+    gui.load()
     self.cel = {first='X', second='O'}
     self.turn = 'X'
     self.pause = false
@@ -40,49 +40,42 @@ function Game:init()
     self.total_games = 0
     -- for tests AI only (don't use in final release)
     -- io.open('stat.txt','w'):close()
-
     self:set_menu_scr()
 end
 
 function Game:set_menu_scr()
     -- clear screen
     gui.Manager.clear()
-
     -- set up first screen
     self.now='menu_scr'
 
-    gui.Label{text=' '..set.GAMENAME:upper()..' ',
+    gui.Label{text=' '..set.APPNAME:upper()..' ',
                     x=set.MIDWID, y=set.MIDHEI-set.DIST*3,
-                    fnt=set.TITLEFNT, anchor='s',frame=2,corner={4,4,2}}
+                    fnt=set.TITLEFNT, anchor='s',frm=2,corner={4,4,2}}
 
     local xo_sel = gui.HBox{x=set.MIDWID, y=set.MIDHEI-set.DIST*2,
                     anchor='n', sep=10}
 
     xo_sel:add(
-                gui.Selector{text='X', fnt=set.TITLEFNT,
-                             variable=self.tile},
-                gui.Selector{text='O', fnt=set.TITLEFNT,
-                             variable=self.tile}
+                gui.Selector{text='X', fnt=set.TITLEFNT, var=self.tile},
+                gui.Selector{text='O', fnt=set.TITLEFNT, var=self.tile}
                 )
 
     local dif_sel = gui.HBox{x=set.MIDWID, y=set.MIDHEI,
                     anchor='n', sep=10}
 
     dif_sel:add(
-                gui.Selector{text='EASY', fnt=set.MENUFNT,
-                     variable=self.ai2},
-                gui.Selector{text='MEDIUM', fnt=set.MENUFNT,
-                    variable=self.ai2},
-                gui.Selector{text='HARD', fnt=set.MENUFNT, anchor='nw',
-                     variable=self.ai2}
+                gui.Selector{text='EASY', fnt=set.MENUFNT, var=self.ai2},
+                gui.Selector{text='MEDIUM', fnt=set.MENUFNT, var=self.ai2},
+                gui.Selector{text='HARD', fnt=set.MENUFNT, var=self.ai2}
                 )
 
     gui.CheckBox{text='HELP', x=set.MIDWID, y=set.MIDHEI+set.DIST,
-        fnt=set.MENUFNT, anchor='n', frame=0,variable=self.help}
+        fnt=set.MENUFNT, anchor='n', frm=0,var=self.help}
 
     gui.Button{text=' START ', x=set.MIDWID, y=set.MIDHEI+set.DIST*4,
                     fnt=set.MENUFNT, anchor='n',
-                    command=function() self:set_game_scr() self:reset() end}
+                    com=function() self:set_game_scr() self:reset() end}
 
 end
 
@@ -102,10 +95,10 @@ function Game:reset()
 
     self.delta_time = self.ai_dt.val
     self.wait_loop = true
-    -- label to execute command
+    -- label to execute com
     gui.LabelExe{text=self.turn .. ' START', x=set.MIDWID, y=set.MIDHEI,
                     fnt=set.TITLEFNT, fntclr=set.TXTCLR,
-                    command=function() self.wait_loop=false end}
+                    com=function() self.wait_loop=false end}
 end
 
 function Game:set_game_scr()
@@ -114,25 +107,25 @@ function Game:set_game_scr()
 
     gui.Label{text=self.score_x.val,x=set.DIST,y=set.DIST/2,
                     anchor='w', fnt=set.GAMEFNT,
-                    variable=self.score_x,frame=2,corner={4,4,2}}
+                    var=self.score_x,frm=2,corner={4,4,2}}
 
     gui.Label{text=self.score_o.val,x=set.WID-set.DIST-2,y=set.DIST/2,
                     anchor='e',fnt=set.GAMEFNT,
-                    variable=self.score_o,frame=2,corner={4,4,2}}
+                    var=self.score_o,frm=2,corner={4,4,2}}
 
     gui.Label{text='SCORE', x=set.MIDWID, y=set.DIST/2,fnt=set.MENUFNT}
 
     gui.Button{text=' MENU ', x=set.DIST, y=set.HEI-set.DIST/2,
                 anchor='w', fnt=set.GAMEFNT,
-                command=function() self:set_menu_scr() end}
+                com=function() self:set_menu_scr() end}
     -- opt button
     gui.Button{image=love.image.newImageData('res/gear.png'),
                 x=set.MIDWID, y=set.HEI-set.DIST/2, anchor='center',
-                command=function() self:set_opt_scr() end, da=1}
+                com=function() self:set_opt_scr() end, da=1}
 
     gui.Button{text=' RESTART ', x=set.WID-set.DIST-2, y=set.HEI-set.DIST/2,
-        anchor='e', fnt=set.GAMEFNT,command=function() self:set_game_scr()
-         self:reset() end, frame=1}
+        anchor='e', fnt=set.GAMEFNT,com=function() self:set_game_scr()
+        self:reset() end, frm=1}
 
     --  set game field
     for i=1, set.FIELD do
@@ -140,7 +133,7 @@ function Game:set_game_scr()
             local Cells=gui.Label{x=set.DIST+(set.SIZE+set.SEP)*(i-1),
                                 y=set.DIST+(set.SIZE+set.SEP)*(j-1),
                                 fnt=set.XOFNT, anchor='nw',fntclr=set.XOCLR,
-                                frame=2, frmclr=set.SQCLR, corner={4,4,2},
+                                frm=2, frmclr=set.SQCLR, corner={4,4,2},
                                 mode='fill', wid=set.SIZE, hei=set.SIZE}
             Cells.type = 'cell'
         end
@@ -154,7 +147,6 @@ function Game:set_game_scr()
 end
 
 function Game:set_fin_scr(scores)
-
     local win
     self.total_games = self.total_games + 1
     if scores['X'] > scores['O'] then
@@ -168,17 +160,17 @@ function Game:set_fin_scr(scores)
         self.stat_var['DRAW'] = self.stat_var['DRAW'] + 1
     end
 
-    local command
+    local com
     if self.number_games.val > 1 then
         -- auto restart
         self.number_games.val = self.number_games.val - 1
-        command = function() self:reset() end
+        com = function() self:reset() end
     else
-        command = function() return nil end
+        com = function() return nil end
     end
 
     gui.LabelExe{text=win, x=set.MIDWID, y=set.MIDHEI, fnt=set.TITLEFNT,
-                            fntclr=set.TXTCLR, command=command}
+                            fntclr=set.TXTCLR, com=com}
     -- for tests AI only (don't use in final release)
     -- self:write_stat_log(scores)
 end
@@ -215,60 +207,56 @@ function Game:set_opt_scr()
     gui.Manager.clear()
     self.now='opt_scr'
     gui.Label{text=' OPTIONS ', x=set.MIDWID, y=set.MIDHEI-set.DIST*4,
-                    fnt=set.TITLEFNT, anchor='s',frame=3}
+                    fnt=set.TITLEFNT, anchor='s',frm=3}
 
     local hum_mach = gui.HBox{x=set.MIDWID,y=set.MIDHEI-set.DIST*3}
 
     hum_mach:add(
-                gui.Selector{text='HUMAN', fnt=set.MENUFNT,
-                     variable=self.player},
-                gui.Selector{text='MACHINE',fnt=set.MENUFNT,
-                     variable=self.player}
+                gui.Selector{text='HUMAN', fnt=set.MENUFNT, var=self.player},
+                gui.Selector{text='MACHINE',fnt=set.MENUFNT, var=self.player}
                     )
 
     gui.Label{text=string.format('%s MACHINE', self.cel.second),
                     x=set.MIDWID, y=set.MIDHEI-set.DIST*2, anchor='n',
-                    fnt=set.GAMEFNT, frame=2}
+                    fnt=set.GAMEFNT, frm=2}
 
-    local dif_first_sel = gui.HBox{x=set.MIDWID,
-                                        y=set.MIDHEI-set.DIST, anchor='n'}
+    local dif1sel = gui.HBox{x=set.MIDWID,y=set.MIDHEI-set.DIST, anchor='n'}
 
-    dif_first_sel:add(
-                        gui.Selector{text='EASY',
-                        fnt=set.GAMEFNT, variable=self.ai2},
-                        gui.Selector{text='MEDIUM',
-                        fnt=set.GAMEFNT, variable=self.ai2},
-                        gui.Selector{text='HARD',
-                        fnt=set.GAMEFNT, variable=self.ai2}
-                        )
+    dif1sel:add(
+                gui.Selector{text='EASY',
+                fnt=set.GAMEFNT, var=self.ai2},
+                gui.Selector{text='MEDIUM',
+                fnt=set.GAMEFNT, var=self.ai2},
+                gui.Selector{text='HARD',
+                fnt=set.GAMEFNT, var=self.ai2}
+                )
 
     gui.Label{text=string.format('%s MACHINE', self.cel.first),
                     x=set.MIDWID, y=set.MIDHEI, anchor='n',
-                    fnt=set.GAMEFNT, frame=2}
+                    fnt=set.GAMEFNT, frm=2}
 
-    local dif_second_sel = gui.HBox{x=set.MIDWID, y=set.MIDHEI+set.DIST,
-                                        anchor='n'}
+    local dif2sel = gui.HBox{x=set.MIDWID, y=set.MIDHEI+set.DIST, anchor='n'}
 
-    dif_second_sel:add(
-                       gui.Selector{text='EASY',
-                        fnt=set.GAMEFNT, variable=self.ai1},
-                        gui.Selector{text='MEDIUM',
-                        fnt=set.GAMEFNT, variable=self.ai1},
-                        gui.Selector{text='HARD',
-                        fnt=set.GAMEFNT, variable=self.ai1}
-                        )
+    dif2sel:add(
+                gui.Selector{text='EASY',
+                fnt=set.GAMEFNT, var=self.ai1},
+                gui.Selector{text='MEDIUM',
+                fnt=set.GAMEFNT, var=self.ai1},
+                gui.Selector{text='HARD',
+                fnt=set.GAMEFNT, var=self.ai1}
+                )
 
     gui.Counter{text='PAUSE ', x=set.MIDWID,
                     y=set.MIDHEI+set.DIST*2.5, anchor='n',
-                    fnt=set.GAMEFNT,variable=self.ai_dt, modifier=0.2}
+                    fnt=set.GAMEFNT,var=self.ai_dt, step=0.2}
 
     gui.Counter{text='GAMES', x=set.MIDWID,
                     y=set.MIDHEI+set.DIST*3.5, anchor='n',
-                    fnt=set.GAMEFNT, min=1, variable=self.number_games}
+                    fnt=set.GAMEFNT, min=1, var=self.number_games}
 
     gui.Button{text=' BACK ', x=set.MIDWID, y=set.MIDHEI+set.DIST*5,
                 anchor='n', fnt=set.MENUFNT,
-                command=function() self:set_game_scr() end, frame=1}
+                com=function() self:set_game_scr() end, frm=1}
 end
 
 function Game:draw()
@@ -296,7 +284,7 @@ function Game:update(dt)
         local initx, inity
         -- show prev turn
         local view_t = self.view_t
-        -- update variables
+        -- update vars
         self.score_x.val = string.format(' %-2.2d  %s ', scores['X'],'X')
         self.score_o.val = string.format(' %s  %2.2d ', 'O', scores['O'])
         -- use  virtual copy of matrix
@@ -310,17 +298,17 @@ function Game:update(dt)
         for _, item in pairs(gui.Manager.items) do
             local upd = item:update(dt)
             if item.type == 'cell' then
-                x = item.rect_posx
-                y = item.rect_posy
+                x = item:get('rectx')
+                y = item:get('recty')
                 x = math.floor((x-set.DIST)/set.SIZE)
                 y = math.floor((y-set.DIST)/set.SIZE)
 
                 if matrix[x+1][y+1] == '.' then
                     item:set({deffrm=set.GRAYBLUE})
                 else
-                    item:set({defclr=item.fntclr,
-                                text=matrix[x+1][y+1],
+                    item:set({defclr=item.fntclr, text=matrix[x+1][y+1],
                                 deffrm = item.frmclr})
+                    item:setup()
                 end
 
                 local complex_eq = fc.partial(fc.equal, {x+1, y+1})
@@ -366,7 +354,6 @@ function Game:update(dt)
                 self.view_t = model[self.ai2.val](self.matrix,self.cel.second)
                 change_turn = model.next_turn(self.matrix,self.cel.first)
             end
-
         end
         -- check if no valid cells and who next
         self.turn = self:is_over(change_turn)

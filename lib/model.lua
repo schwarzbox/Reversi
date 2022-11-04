@@ -1,7 +1,6 @@
 #!/usr/bin/env lua
 -- Sun Mar 11 02:11:52 2018
 -- (c) Alexander Veledzimovich
-
 -- model REVERSI
 
 local set = require('lib/set')
@@ -91,7 +90,7 @@ local function valid_empty(matrix, tile)
 end
 
 local function help(matrix, tile)
-    local copy = fc.clone(matrix)
+    local copy = fc.copy(matrix)
     local valid_empty_tiles = valid_empty(copy, tile)
     for _, v in pairs(valid_empty_tiles, tile) do
         copy[v[1]][v[2]] = '.'
@@ -152,7 +151,7 @@ local function computer_move(matrix, tile)
     -- return valid move
     local best_move = {1, 1}
     for i = 1, #possible do
-        local copy = fc.clone(matrix)
+        local copy = fc.copy(matrix)
 
         make_move(copy, tile, possible[i][1], possible[i][2])
         local score = scores(copy)[tile]
@@ -189,7 +188,7 @@ local function twelve_games (matrix, tile)
     local best_move = {1,1}
 
     for i = 1, #possible do
-        local copy = fc.clone(matrix)
+        local copy = fc.copy(matrix)
         local score = 0
 
         make_move(copy, tile, possible[i][1], possible[i][2])

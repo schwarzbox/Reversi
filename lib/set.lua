@@ -1,10 +1,10 @@
 #!/usr/bin/env lua
 -- Wed Feb 28 12:38:12 2018
 -- (c) Alexander Veledzimovich
-
 -- set REVERSI
+
 local set = {
-    GAMENAME = 'Reversi',
+    APPNAME = 'Reversi',
     VER = '3.0',
     FULLSCR = false,
     WID = love.graphics.getWidth(),

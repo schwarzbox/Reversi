@@ -10,7 +10,7 @@
 -- Permission is hereby granted, free of charge, to any person obtaining a
 -- copy of this software and associated documentation files (the "Software"),
 -- to deal in the Software without restriction, including without limitation
--- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- the rights to use, copy, mxodify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Software, and to permit persons to whom the
 -- Software is furnished to do so, subject to the following conditions:
 
@@ -30,9 +30,7 @@ local set = require('lib/set')
 
 io.stdout:setvbuf('no')
 function love.load()
-    if arg[1] then print(set.VER, set.GAMENAME, 'Game (love2d)', arg[1]) end
-    local icon = love.image.newImageData('res/icon.png')
-    love.window.setIcon(icon)
+    if arg[1] then print(set.VER, set.APPNAME, 'Game (love2d)', arg[1]) end
 
     love.window.setFullscreen(set.FULLSCR, 'desktop')
     love.graphics.setBackgroundColor(set.XOCLR)
@@ -41,9 +39,9 @@ function love.load()
 end
 
 function love.update(dt)
-    local upd_title = string.format('%s %s', set.GAMENAME, set.VER,
+    local title = string.format('%s %s', set.APPNAME, set.VER,
                                     love.timer.getFPS())
-    love.window.setTitle(upd_title)
+    love.window.setTitle(title)
 
     view.Game:update(dt)
 end
