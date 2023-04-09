@@ -1,6 +1,6 @@
 #!/usr/bin/env love
 -- Mon Mar 12 02:00:26 2018
--- (c) Alexander Veledzimovich
+-- (c) Aliaksandr Veledzimovich
 -- view REVERSI
 
 local fc = require('lib/fct')

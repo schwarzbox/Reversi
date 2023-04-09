@@ -1,16 +1,20 @@
 # Reversi
 
-v3.0
+v3.1
 
-"Reversi" is a strategy board game for two players, played on an 8×8 uncheckered board.
+"Reversi" is a strategic board game that is played by two players on an 8x8 uncheckered board. The game involves players placing pieces on the board in an attempt to capture and convert their opponent's pieces.
 
-HINT: Click help in main menu and app show you available moves when you start playing.
+HINT: Click "HELP" in the main menu and app shows you available moves during gameplay.
 
-Made with Love2d and simple self-made GUI library on top of Love Engine.
+Made with LÖVE and simple self-made GUI library on top of the engine.
 
-[Release available for Mac OS 64-bit & for Windows 32-bit](https://github.com/schwarzbox/Reversi/releases)
+[Release available for MacOS-arm64, MacOS-x86, Windows-64bit & Windows-32bit](https://github.com/schwarzbox/Reversi/releases)
 
-To run source code: clone repository, download & install [LÖVE 11.3](https://love2d.org) for you system and run reversi.love
+To run source code: clone repository, download & install [LÖVE 11.4](https://love2d.org) for your system.
+
+Engine: [LÖVE Development Team](https://love2d.org/)
+
+Design/Art/Code: [Aliaksandr Veledzimovich](https://twitter.com/veledzimovich)
 
 ![Screenshot](screenshot/screenshot1.png)
 ![Screenshot](screenshot/screenshot2.png)

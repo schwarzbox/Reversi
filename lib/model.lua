@@ -1,6 +1,6 @@
 #!/usr/bin/env lua
 -- Sun Mar 11 02:11:52 2018
--- (c) Alexander Veledzimovich
+-- (c) Aliaksandr Veledzimovich
 -- model REVERSI
 
 local set = require('lib/set')

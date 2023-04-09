@@ -1,11 +1,11 @@
 #!/usr/bin/env love
 -- REVERSI
--- 3.0
+-- 3.1
 -- Game (love2d)
 -- main.lua
 
 -- MIT License
--- Copyright (c) 2018 Alexander Veledzimovich veledz@gmail.com
+-- Copyright (c) 2018 Aliaksandr Veledzimovich veledz@gmail.com
 
 -- Permission is hereby granted, free of charge, to any person obtaining a
 -- copy of this software and associated documentation files (the "Software"),
@@ -36,13 +36,18 @@ function love.load()
     love.graphics.setBackgroundColor(set.XOCLR)
     -- make first scr and init model
     view.Game:init()
+
+    local title = string.format(
+        '%s %s',
+        set.APPNAME,
+        set.VER
+        -- love.timer.getFPS()
+    )
+    love.window.setTitle(title)
 end
 
 function love.update(dt)
-    local title = string.format('%s %s', set.APPNAME, set.VER,
-                                    love.timer.getFPS())
-    love.window.setTitle(title)
-
+    -- update model
     view.Game:update(dt)
 end
 
