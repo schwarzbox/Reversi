@@ -1,29 +1,31 @@
 #!/usr/bin/env lua
 -- LOVUI
 -- 3.0
--- GUI (love2d)
+-- UI (love2d)
 -- lovui.lua
 
 -- MIT License
 -- Copyright (c) 2018 Aliaksandr Veledzimovich veledz@gmail.com
 
--- Permission is hereby granted, free of charge, to any person obtaining a
--- copy of this software and associated documentation files (the "Software"),
--- to deal in the Software without restriction, including without limitation
--- the rights to use, copy, modify, merge, publish, distribute, sublicense,
--- and/or sell copies of the Software, and to permit persons to whom the
--- Software is furnished to do so, subject to the following conditions:
+-- Permission is hereby granted, free of charge, to any person
+-- obtaining a copy of this software and associated documentation files
+-- (the "Software"), to deal in the Software without restriction,
+-- including without limitation the rights to use, copy, modify, merge,
+-- publish, distribute, sublicense, and/or sell copies of the Software,
+-- and to permit persons to whom the Software is furnished to do so,
+-- subject to the following conditions:
 
--- The above copyright notice and this permission notice shall be included in
--- all copies or substantial portions of the Software.
+-- The above copyright notice and this permission notice shall be
+-- included in all copies or substantial portions of the Software.
 
--- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
--- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
--- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
--- DEALINGS IN THE SOFTWARE.
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+-- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+-- OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+-- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+-- BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+-- ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+-- CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+-- THE SOFTWARE.
 
 -- 4.0
 -- Make handle pan (fold button) fof HBox VBox to drag item.
@@ -39,10 +41,9 @@
 -- utf-8 support
 -- faster > 256 obj 60 fps
 
-
 -- use ImageData when provide images for UI elements
 
-if arg[1] then print('3.0 LOVUI GUI (love2d)', arg[1]) end
+if arg[1] then print('3.0 LOVUI UI (love2d)', arg[1]) end
 
 -- lua<5.3
 local unpack = table.unpack or unpack

@@ -1,4 +1,6 @@
--- conf REVERSI
+-- REVERSI
+-- conf.lua
+
 function love.conf(t)
     -- The name of the save directory (string)
     t.identity = 'ReversiData'

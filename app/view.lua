@@ -1,17 +1,21 @@
 #!/usr/bin/env love
--- Mon Mar 12 02:00:26 2018
--- (c) Aliaksandr Veledzimovich
--- view REVERSI
+-- REVERSI
+-- view.lua
 
-local fc = require('lib/fct')
-local gui = require('lib/lovui')
-local model = require('lib/model')
-local set = require('lib/set')
+-- Copyright (c) 2018 Aliaksandr Veledzimovich veledz@gmail.com
+-- SPDX-License-Identifier: MIT
+
+local fct = require('lib/fct')
+local ui = require('lib/lovui')
+
+local model = require('app/model')
+local set = require('app/set')
+
 -- game manager
 local Game = {}
 
 function Game:init()
-    gui.load()
+    ui.load()
     self.cel = {first='X', second='O'}
     self.turn = 'X'
     self.pause = false
@@ -45,35 +49,35 @@ end
 
 function Game:set_menu_scr()
     -- clear screen
-    gui.Manager.clear()
+    ui.Manager.clear()
     -- set up first screen
     self.now='menu_scr'
 
-    gui.Label{text=' '..set.APPNAME:upper()..' ',
+    ui.Label{text=' '..set.APPNAME:upper()..' ',
                     x=set.MIDWID, y=set.MIDHEI-set.DIST*3,
                     fnt=set.TITLEFNT, anchor='s',frm=2,corner={4,4,2}}
 
-    local xo_sel = gui.HBox{x=set.MIDWID, y=set.MIDHEI-set.DIST*2,
+    local xo_sel = ui.HBox{x=set.MIDWID, y=set.MIDHEI-set.DIST*2,
                     anchor='n', sep=10}
 
     xo_sel:add(
-                gui.Selector{text='X', fnt=set.TITLEFNT, var=self.tile},
-                gui.Selector{text='O', fnt=set.TITLEFNT, var=self.tile}
+                ui.Selector{text='X', fnt=set.TITLEFNT, var=self.tile},
+                ui.Selector{text='O', fnt=set.TITLEFNT, var=self.tile}
                 )
 
-    local dif_sel = gui.HBox{x=set.MIDWID, y=set.MIDHEI,
+    local dif_sel = ui.HBox{x=set.MIDWID, y=set.MIDHEI,
                     anchor='n', sep=10}
 
     dif_sel:add(
-                gui.Selector{text='EASY', fnt=set.MENUFNT, var=self.ai2},
-                gui.Selector{text='MEDIUM', fnt=set.MENUFNT, var=self.ai2},
-                gui.Selector{text='HARD', fnt=set.MENUFNT, var=self.ai2}
+                ui.Selector{text='EASY', fnt=set.MENUFNT, var=self.ai2},
+                ui.Selector{text='MEDIUM', fnt=set.MENUFNT, var=self.ai2},
+                ui.Selector{text='HARD', fnt=set.MENUFNT, var=self.ai2}
                 )
 
-    gui.CheckBox{text='HELP', x=set.MIDWID, y=set.MIDHEI+set.DIST,
+    ui.CheckBox{text='HELP', x=set.MIDWID, y=set.MIDHEI+set.DIST,
         fnt=set.MENUFNT, anchor='n', frm=0,var=self.help}
 
-    gui.Button{text=' START ', x=set.MIDWID, y=set.MIDHEI+set.DIST*4,
+    ui.Button{text=' START ', x=set.MIDWID, y=set.MIDHEI+set.DIST*4,
                     fnt=set.MENUFNT, anchor='n',
                     com=function() self:set_game_scr() self:reset() end}
 
@@ -91,46 +95,46 @@ function Game:reset()
     self.matrix = model.reset(self.matrix)
 
     self.view_t = nil
-    self.turn = fc.randval(self.cel)
+    self.turn = fct.randval(self.cel)
 
     self.delta_time = self.ai_dt.val
     self.wait_loop = true
     -- label to execute com
-    gui.LabelExe{text=self.turn .. ' START', x=set.MIDWID, y=set.MIDHEI,
+    ui.LabelExe{text=self.turn .. ' START', x=set.MIDWID, y=set.MIDHEI,
                     fnt=set.TITLEFNT, fntclr=set.TXTCLR,
                     com=function() self.wait_loop=false end}
 end
 
 function Game:set_game_scr()
-    gui.Manager.clear()
+    ui.Manager.clear()
     self.now='game_scr'
 
-    gui.Label{text=self.score_x.val,x=set.DIST,y=set.DIST/2,
+    ui.Label{text=self.score_x.val,x=set.DIST,y=set.DIST/2,
                     anchor='w', fnt=set.GAMEFNT,
                     var=self.score_x,frm=2,corner={4,4,2}}
 
-    gui.Label{text=self.score_o.val,x=set.WID-set.DIST-2,y=set.DIST/2,
+    ui.Label{text=self.score_o.val,x=set.WID-set.DIST-2,y=set.DIST/2,
                     anchor='e',fnt=set.GAMEFNT,
                     var=self.score_o,frm=2,corner={4,4,2}}
 
-    gui.Label{text='SCORE', x=set.MIDWID, y=set.DIST/2,fnt=set.MENUFNT}
+    ui.Label{text='SCORE', x=set.MIDWID, y=set.DIST/2,fnt=set.MENUFNT}
 
-    gui.Button{text=' MENU ', x=set.DIST, y=set.HEI-set.DIST/2,
+    ui.Button{text=' MENU ', x=set.DIST, y=set.HEI-set.DIST/2,
                 anchor='w', fnt=set.GAMEFNT,
                 com=function() self:set_menu_scr() end}
     -- opt button
-    gui.Button{image=love.image.newImageData('res/gear.png'),
+    ui.Button{image=love.image.newImageData('res/gear.png'),
                 x=set.MIDWID, y=set.HEI-set.DIST/2, anchor='center',
                 com=function() self:set_opt_scr() end, da=1}
 
-    gui.Button{text=' RESTART ', x=set.WID-set.DIST-2, y=set.HEI-set.DIST/2,
+    ui.Button{text=' RESTART ', x=set.WID-set.DIST-2, y=set.HEI-set.DIST/2,
         anchor='e', fnt=set.GAMEFNT,com=function() self:set_game_scr()
         self:reset() end, frm=1}
 
     --  set game field
     for i=1, set.FIELD do
         for j=1, set.FIELD do
-            local Cells=gui.Label{x=set.DIST+(set.SIZE+set.SEP)*(i-1),
+            local Cells=ui.Label{x=set.DIST+(set.SIZE+set.SEP)*(i-1),
                                 y=set.DIST+(set.SIZE+set.SEP)*(j-1),
                                 fnt=set.XOFNT, anchor='nw',fntclr=set.XOCLR,
                                 frm=2, frmclr=set.SQCLR, corner={4,4,2},
@@ -140,7 +144,7 @@ function Game:set_game_scr()
     end
 
     -- pause label
-    gui.Label{text='PAUSE', x=set.MIDWID, y=set.MIDHEI,fnt=set.MENUFNT,
+    ui.Label{text='PAUSE', x=set.MIDWID, y=set.MIDHEI,fnt=set.MENUFNT,
                     fntclr=set.TXTCLR}
 
 
@@ -169,7 +173,7 @@ function Game:set_fin_scr(scores)
         com = function() return nil end
     end
 
-    gui.LabelExe{text=win, x=set.MIDWID, y=set.MIDHEI, fnt=set.TITLEFNT,
+    ui.LabelExe{text=win, x=set.MIDWID, y=set.MIDHEI, fnt=set.TITLEFNT,
                             fntclr=set.TXTCLR, com=com}
     -- for tests AI only (don't use in final release)
     -- self:write_stat_log(scores)
@@ -204,66 +208,66 @@ function Game:write_stat_log(scores)
 end
 
 function Game:set_opt_scr()
-    gui.Manager.clear()
+    ui.Manager.clear()
     self.now='opt_scr'
-    gui.Label{text=' OPTIONS ', x=set.MIDWID, y=set.MIDHEI-set.DIST*4,
+    ui.Label{text=' OPTIONS ', x=set.MIDWID, y=set.MIDHEI-set.DIST*4,
                     fnt=set.TITLEFNT, anchor='s',frm=3}
 
-    local hum_mach = gui.HBox{x=set.MIDWID,y=set.MIDHEI-set.DIST*3}
+    local hum_mach = ui.HBox{x=set.MIDWID,y=set.MIDHEI-set.DIST*3}
 
     hum_mach:add(
-                gui.Selector{text='HUMAN', fnt=set.MENUFNT, var=self.player},
-                gui.Selector{text='MACHINE',fnt=set.MENUFNT, var=self.player}
+                ui.Selector{text='HUMAN', fnt=set.MENUFNT, var=self.player},
+                ui.Selector{text='MACHINE',fnt=set.MENUFNT, var=self.player}
                     )
 
-    gui.Label{text=string.format('%s MACHINE', self.cel.second),
+    ui.Label{text=string.format('%s MACHINE', self.cel.second),
                     x=set.MIDWID, y=set.MIDHEI-set.DIST*2, anchor='n',
                     fnt=set.GAMEFNT, frm=2}
 
-    local dif1sel = gui.HBox{x=set.MIDWID,y=set.MIDHEI-set.DIST, anchor='n'}
+    local dif1sel = ui.HBox{x=set.MIDWID,y=set.MIDHEI-set.DIST, anchor='n'}
 
     dif1sel:add(
-                gui.Selector{text='EASY',
+                ui.Selector{text='EASY',
                 fnt=set.GAMEFNT, var=self.ai2},
-                gui.Selector{text='MEDIUM',
+                ui.Selector{text='MEDIUM',
                 fnt=set.GAMEFNT, var=self.ai2},
-                gui.Selector{text='HARD',
+                ui.Selector{text='HARD',
                 fnt=set.GAMEFNT, var=self.ai2}
                 )
 
-    gui.Label{text=string.format('%s MACHINE', self.cel.first),
+    ui.Label{text=string.format('%s MACHINE', self.cel.first),
                     x=set.MIDWID, y=set.MIDHEI, anchor='n',
                     fnt=set.GAMEFNT, frm=2}
 
-    local dif2sel = gui.HBox{x=set.MIDWID, y=set.MIDHEI+set.DIST, anchor='n'}
+    local dif2sel = ui.HBox{x=set.MIDWID, y=set.MIDHEI+set.DIST, anchor='n'}
 
     dif2sel:add(
-                gui.Selector{text='EASY',
+                ui.Selector{text='EASY',
                 fnt=set.GAMEFNT, var=self.ai1},
-                gui.Selector{text='MEDIUM',
+                ui.Selector{text='MEDIUM',
                 fnt=set.GAMEFNT, var=self.ai1},
-                gui.Selector{text='HARD',
+                ui.Selector{text='HARD',
                 fnt=set.GAMEFNT, var=self.ai1}
                 )
 
-    gui.Counter{text='PAUSE ', x=set.MIDWID,
+    ui.Counter{text='PAUSE ', x=set.MIDWID,
                     y=set.MIDHEI+set.DIST*2.5, anchor='n',
                     fnt=set.GAMEFNT,var=self.ai_dt, step=0.2}
 
-    gui.Counter{text='GAMES', x=set.MIDWID,
+    ui.Counter{text='GAMES', x=set.MIDWID,
                     y=set.MIDHEI+set.DIST*3.5, anchor='n',
                     fnt=set.GAMEFNT, min=1, var=self.number_games}
 
-    gui.Button{text=' BACK ', x=set.MIDWID, y=set.MIDHEI+set.DIST*5,
+    ui.Button{text=' BACK ', x=set.MIDWID, y=set.MIDHEI+set.DIST*5,
                 anchor='n', fnt=set.MENUFNT,
                 com=function() self:set_game_scr() end, frm=1}
 end
 
 function Game:draw()
     if self.now == 'menu_scr' or self.now =='opt_scr' then
-       gui.Manager.draw()
+       ui.Manager.draw()
     elseif self.now == 'game_scr' then
-       for _, item in pairs(gui.Manager.items) do
+       for _, item in pairs(ui.Manager.items) do
            if item.text == 'PAUSE' and not self.pause then
                goto continue
            end
@@ -276,7 +280,7 @@ end
 function Game:update(dt)
     self.delta_time = self.delta_time + dt
     if self.now == 'menu_scr' or self.now =='opt_scr' then
-        gui.Manager.update(dt)
+        ui.Manager.update(dt)
     elseif self.now == 'game_scr' and not self.pause then
         local matrix
         local scores = model.scores(self.matrix)
@@ -295,7 +299,7 @@ function Game:update(dt)
         end
 
         -- update view
-        for _, item in pairs(gui.Manager.items) do
+        for _, item in pairs(ui.Manager.items) do
             local upd = item:update(dt)
             if item.type == 'cell' then
                 x = item:get('rectx')
@@ -311,9 +315,9 @@ function Game:update(dt)
                     item:setup()
                 end
 
-                local complex_eq = fc.partial(fc.equal, {x+1, y+1})
+                local complex_eq = fct.partial(fct.equal, {x+1, y+1})
                 if view_t then
-                    local in_show = fc.filter(complex_eq, view_t)
+                    local in_show = fct.filter(complex_eq, view_t)
                     if #in_show>0 then
                         item:set({defclr=item.onfrm})
                     end

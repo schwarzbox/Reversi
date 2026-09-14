@@ -1,7 +1,8 @@
-#!/usr/bin/env lua
--- Wed Feb 28 12:38:12 2018
--- (c) Aliaksandr Veledzimovich
--- set REVERSI
+-- REVERSI
+-- set.lua
+
+-- Copyright (c) 2018 Aliaksandr Veledzimovich veledz@gmail.com
+-- SPDX-License-Identifier: MIT
 
 local set = {
     APPNAME = 'Reversi',

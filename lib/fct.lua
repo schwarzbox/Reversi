@@ -1,48 +1,35 @@
 #!/usr/bin/env lua
 -- FCT
--- 4.6
+-- 4.7
 -- Functional Tools (lua)
 -- fct.lua
 
 -- MIT License
--- Copyright (c) 2018 Alexander Veledzimovich veledz@gmail.com
+-- Copyright (c) 2018 Aliaksandr Veledzimovich veledz@gmail.com
 
--- Permission is hereby granted, free of charge, to any person obtaining a
--- copy of this software and associated documentation files (the "Software"),
--- to deal in the Software without restriction, including without limitation
--- the rights to use, copy, modify, merge, publish, distribute, sublicense,
--- and/or sell copies of the Software, and to permit persons to whom the
--- Software is furnished to do so, subject to the following conditions:
+-- Permission is hereby granted, free of charge, to any person
+-- obtaining a copy of this software and associated documentation files
+-- (the "Software"), to deal in the Software without restriction,
+-- including without limitation the rights to use, copy, modify, merge,
+-- publish, distribute, sublicense, and/or sell copies of the Software,
+-- and to permit persons to whom the Software is furnished to do so,
+-- subject to the following conditions:
 
--- The above copyright notice and this permission notice shall be included in
--- all copies or substantial portions of the Software.
+-- The above copyright notice and this permission notice shall be
+-- included in all copies or substantial portions of the Software.
 
--- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
--- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
--- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
--- DEALINGS IN THE SOFTWARE.
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+-- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+-- OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+-- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+-- BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+-- ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+-- CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+-- THE SOFTWARE.
 
--- 5.0
--- separate combo/random library
--- clear tests
+-- No metatables when return array
+-- keys, vals, items, flip, range, repl, split, sep, iter, set, union, same, diff, map, filter, zip, accumulate, permutation, combination, shuffknuth (faster)
 
--- Tool Box
--- len, count, keys, vals, items, iskey, isval, flip, range, rep,
--- split, invert, isort, slice, sep, copy, iter,
--- equal, join, union, same, diff,
--- each, map, mapr, filter, any, all, zip, reduce, partial, compose
--- chain, cache,
--- accumulate, permutation, combination, randkey, randval, shuff, shuffknuth
--- weighted
-
--- No metatables when return arr
--- keys, vals, items, flip, range, repl, split, sep, iter, union, same, diff, map, filter, zip, accumulate, permutation, combination, shuffknuth (faster)
-
--- Support
--- gkv
 
 if arg[0] then io.write('4.6 FCT Functional Tools (lua)', arg[0],'\n') end
 if arg[1] then io.write('4.6 FCT Functional Tools (lua)', arg[1],'\n') end
@@ -77,7 +64,16 @@ end
 
 local FCT={}
 
--- Tool Box
+function FCT.gkv(...)
+    for key, value in pairs(...) do
+        if type(value) == 'table' then
+            for k, v in pairs(value) do print(k, v, type(v)) end
+        else
+            print(key, value)
+        end
+    end
+end
+
 function FCT.len(item)
     nofarg(item,'item','table')
     local len = 0
@@ -117,8 +113,8 @@ end
 function FCT.items(item)
     nofarg(item,'item','table')
     local arr = {}
-    for _,v in pairs(item) do
-        arr[v]=v
+    for k, v in pairs(item) do
+        arr[#arr+1] = {k, v}
     end
     return arr
 end
@@ -126,8 +122,8 @@ end
 function FCT.iskey(key,item)
     nofarg(item,'item','table')
     if key==nil then return false end
-    for k, v in pairs(item) do
-        if k==key then return {k,v} end
+    for k, _ in pairs(item) do
+        if k==key then return true end
     end
     return false
 end
@@ -135,10 +131,19 @@ end
 function FCT.isval(val,item)
     nofarg(item,'item','table')
     if val==nil then return false end
-    for k, v in pairs(item) do
-        if v==val then return {k,v} end
+    for _, v in pairs(item) do
+        if v==val then return true end
     end
     return false
+end
+
+function FCT.index(val, item)
+    nofarg(item,'item','table')
+    if val==nil then return nil end
+    for k, v in pairs(item) do
+        if v==val then return k end
+    end
+    return nil
 end
 
 function FCT.flip(item)
@@ -205,33 +210,6 @@ function FCT.invert(item)
     end
     setmetatable(arr, meta)
     return arr
-end
-
-function FCT.isort(item,val,rev)
-    nofarg(item,'item','table')
-    local keys = {}
-    for k,_ in pairs(item) do keys[#keys+1]=k end
-
-    if val then
-        local sort = function(t,a,b) return t[a]<t[b] end
-        if rev then
-            sort = function(t,a,b) return t[a]>t[b] end
-        end
-
-        table.sort(keys,function(a,b) return sort(item,a,b) end)
-    else
-        table.sort(keys)
-        if rev then
-            table.sort(keys,function(a,b) return a>b end)
-        end
-    end
-
-    local i = 0
-    local function inner()
-        i = i+1
-        if keys[i] then return keys[i], item[keys[i]] end
-    end
-    return inner
 end
 
 function FCT.slice(item,start,fin,step)
@@ -302,9 +280,9 @@ function FCT.iter(item)
     end
 
     function meta.__len()
-    local len = 0
-    for _,_ in pairs(tmpitem) do len = len + 1 end
-    return len
+        local len = 0
+        for _,_ in pairs(tmpitem) do len = len + 1 end
+        return len
     end
     setmetatable(arr, meta)
     return arr
@@ -313,9 +291,14 @@ end
 function FCT.equal(item1,item2)
     nofarg(item1,'item1','table')
     nofarg(item2,'item2','table')
-    if #item1~=#item2 then return false end
+    if FCT.len(item1)~=FCT.len(item2) then return false end
+
     for k,v in pairs(item1) do
-        if v~=item2[k] then return false end
+        if type(v)=='table' and type(item2[k])=='table' then
+            if not FCT.equal(v,item2[k]) then return false end
+        elseif v~=item2[k] then
+            return false
+        end
     end
     return true
 end
@@ -339,58 +322,85 @@ function FCT.join(item1,item2)
     return arr
 end
 
-function FCT.union(item1,item2)
-    nofarg(item1,'item1','table')
-    nofarg(item2,'item2','table')
+function FCT.set(item)
+    nofarg(item,'item','table')
+    local arr = {}
+    for _,v in pairs(item) do
+        arr[v]=v
+    end
+    return arr
+end
+
+function FCT.union(item1, item2)
+    nofarg(item1, 'item1', 'table')
+    nofarg(item2, 'item2', 'table')
     local arr = {}
 
-    for k, v in pairs(item1) do
-        if not FCT.isval(v,arr)  then
-            if type(k)=='number' then k = #arr+1  end
-            arr[k] = v
-        end
+    for _, v in pairs(item1) do
+        arr[v] = v
     end
-    for k, v in pairs(item2) do
-        if not FCT.isval(v,arr) then
-            if type(k)=='number' then k = #arr+1 end
-            arr[k] = v
+    for _, v in pairs(item2) do
+        arr[v] = v
+    end
+    return arr
+end
+
+function FCT.same(item1, item2)
+    nofarg(item1, 'item1', 'table')
+    nofarg(item2, 'item2', 'table')
+    local arr = {}
+
+    for _, v in pairs(item1) do
+        if FCT.isval(v, item2) then
+            arr[v] = v
         end
     end
     return arr
 end
 
-function FCT.same(item1,item2)
-    nofarg(item1,'item1','table')
-    nofarg(item2,'item2','table')
+function FCT.diff(item1, item2)
+    nofarg(item1, 'item1', 'table')
+    nofarg(item2, 'item2', 'table')
     local arr = {}
 
-    for k, v in pairs(item1) do
-        if FCT.isval(v,item2) and not FCT.isval(v,arr) then
-            if type(k)=='number' then k = #arr+1 end
-            arr[k] = v
+    for _, v in pairs(item1) do
+        if not FCT.isval(v, item2) then
+            arr[v] = v
+        end
+    end
+    for _, v in pairs(item2) do
+        if not FCT.isval(v, item1) then
+            arr[v] = v
         end
     end
     return arr
 end
 
-function FCT.diff(item1,item2)
-    nofarg(item1,'item1','table')
-    nofarg(item2,'item2','table')
-    local arr = {}
+function FCT.isort(item,val,rev)
+    nofarg(item,'item','table')
+    local keys = {}
+    for k,_ in pairs(item) do keys[#keys+1]=k end
 
-    for k, v in pairs(item1) do
-        if not FCT.isval(v,item2) and not FCT.isval(v,arr) then
-            if type(k)=='number' then k = #arr+1 end
-            arr[k] = v
+    if val then
+        local sort = function(t,a,b) return t[a]<t[b] end
+        if rev then
+            sort = function(t,a,b) return t[a]>t[b] end
+        end
+
+        table.sort(keys,function(a,b) return sort(item,a,b) end)
+    else
+        table.sort(keys)
+        if rev then
+            table.sort(keys,function(a,b) return a>b end)
         end
     end
-    for k, v in pairs(item2) do
-        if not FCT.isval(v,item1) and not FCT.isval(v,arr) then
-            if type(k)=='number' then k = #arr+1 end
-            arr[k] = v
-        end
+
+    local i = 0
+    local function inner()
+        i = i+1
+        if keys[i] then return keys[i], item[keys[i]] end
     end
-    return arr
+    return inner
 end
 
 function FCT.each(obj,item)
@@ -646,17 +656,6 @@ function FCT.weighted(item)
     for k, v in pairs(item) do
         if rnd <= v then return k end
         rnd = rnd - v
-    end
-end
-
--- Support
-function FCT.gkv(...)
-    for key, value in pairs(...) do
-        if type(value) == 'table' then
-            for k, v in pairs(value) do print(k, v, type(v)) end
-        else
-            print(key, value)
-        end
     end
 end
 

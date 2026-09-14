@@ -1,10 +1,13 @@
 #!/usr/bin/env lua
--- Sun Mar 11 02:11:52 2018
--- (c) Aliaksandr Veledzimovich
--- model REVERSI
+-- REVERSI
+-- model.lua
 
-local set = require('lib/set')
-local fc = require('lib/fct')
+-- Copyright (c) 2018 Aliaksandr Veledzimovich veledz@gmail.com
+-- SPDX-License-Identifier: MIT
+
+local fct = require('lib/fct')
+
+local set = require('app/set')
 
 local function reset(matrix)
     for i=1, set.FIELD do
@@ -40,8 +43,10 @@ local function valid(matrix, tile, xst, yst)
 
     local arr = {}
 
-    local direct = {{0, 1}, {1, 1}, {1, 0}, {1, -1},
-                       {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}}
+    local direct = {
+        {0, 1}, {1, 1}, {1, 0}, {1, -1},
+        {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}
+    }
 
     -- find all tiles to flip from start position
     for i = 1, #direct do
@@ -53,15 +58,15 @@ local function valid(matrix, tile, xst, yst)
         x = xdir + x
         y = ydir + y
 
-        while ((fc.isval(x, fc.range(1,set.FIELD)) and
-                fc.isval(y, fc.range(1,set.FIELD))) and
+        while ((fct.isval(x, fct.range(1,set.FIELD)) and
+                fct.isval(y, fct.range(1,set.FIELD))) and
             matrix[x][y] == other) do
             x = xdir + x
             y = ydir + y
         end
 
-        if ((fc.isval(x, fc.range(1,set.FIELD)) and
-            fc.isval(y, fc.range(1,set.FIELD))) and
+        if ((fct.isval(x, fct.range(1,set.FIELD)) and
+            fct.isval(y, fct.range(1,set.FIELD))) and
             matrix[x][y] == tile) then
             while true do
                 x=x-xdir
@@ -73,7 +78,7 @@ local function valid(matrix, tile, xst, yst)
     end
 
     matrix[xst][yst] = ' '
-    if fc.len(arr) == 0 then return end
+    if fct.len(arr) == 0 then return end
     return arr
 end
 
@@ -90,7 +95,7 @@ local function valid_empty(matrix, tile)
 end
 
 local function help(matrix, tile)
-    local copy = fc.copy(matrix)
+    local copy = fct.copy(matrix)
     local valid_empty_tiles = valid_empty(copy, tile)
     for _, v in pairs(valid_empty_tiles, tile) do
         copy[v[1]][v[2]] = '.'
@@ -105,7 +110,7 @@ local function make_move(matrix, tile, x, y)
     for _, v in pairs(flip) do
         matrix[v[1]][v[2]] = tile
     end
-    return fc.join(flip,{{x,y}})
+    return fct.join(flip,{{x,y}})
 end
 
 local function next_turn(matrix, tile)
@@ -139,7 +144,7 @@ end
 local function computer_move(matrix, tile)
     local valid_empty_tiles = valid_empty(matrix, tile)
 
-    local possible = fc.shuffknuth(valid_empty_tiles)
+    local possible = fct.shuffknuth(valid_empty_tiles)
 
     for i = 1, #possible do
         if corner(possible[i][1],possible[i][2]) then
@@ -151,7 +156,7 @@ local function computer_move(matrix, tile)
     -- return valid move
     local best_move = {1, 1}
     for i = 1, #possible do
-        local copy = fc.copy(matrix)
+        local copy = fct.copy(matrix)
 
         make_move(copy, tile, possible[i][1], possible[i][2])
         local score = scores(copy)[tile]
@@ -165,7 +170,7 @@ end
 
 local function easy_strategy(matrix, tile)
     local valid_empty_tiles = valid_empty(matrix, tile)
-    local move = fc.randval(valid_empty_tiles)
+    local move = fct.randval(valid_empty_tiles)
     if move then
         return make_move(matrix, tile, move[1], move[2])
     end
@@ -183,12 +188,12 @@ local function twelve_games (matrix, tile)
     if tile == 'X' then other = 'O' else  other = 'X' end
     local valid_empty_tiles = valid_empty(matrix, tile)
 
-    local possible = fc.shuffknuth(valid_empty_tiles)
+    local possible = fct.shuffknuth(valid_empty_tiles)
     local best = -1
     local best_move = {1,1}
 
     for i = 1, #possible do
-        local copy = fc.copy(matrix)
+        local copy = fct.copy(matrix)
         local score = 0
 
         make_move(copy, tile, possible[i][1], possible[i][2])
